@@ -1,4 +1,3 @@
-// screens/login_screen.dart
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
@@ -11,12 +10,9 @@ class _LoginState extends State<Login> {
   final TextEditingController passwordController = TextEditingController();
 
   void loginUser() {
-    // Redirection vers l'interface Transporteur
-    // Navigator.pushReplacementNamed(context, '/transporterInterface');
-    Navigator.pushReplacementNamed(context, '/clientInterface');
-
-
-    // Pour rediriger vers l'interface Client, utilisez cette ligne à la place :
+    // Redirection vers l'interface transporteur
+    Navigator.pushReplacementNamed(context, '/transporterInterface');
+    // Redirection vers l'interface Client
     // Navigator.pushReplacementNamed(context, '/clientInterface');
   }
 
@@ -43,11 +39,19 @@ class _LoginState extends State<Login> {
               onPressed: loginUser,
               child: Text('Se connecter'),
             ),
+            // Bouton pour rediriger vers la page d'inscription
             TextButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/register');
               },
               child: Text("Pas encore de compte ? Inscrivez-vous"),
+            ),
+            // Nouveau bouton "Mot de passe oublié"
+            TextButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/forgotPassword');
+              },
+              child: Text("Mot de passe oublié ?"),
             ),
           ],
         ),
