@@ -23,11 +23,30 @@ class ClientInterface extends StatelessWidget {
               Text("Interface Client"),
               Row(
                 children: [
+                 
+                  SizedBox(width: 5), // Set a 5px margin between name and image
+
+                  // Icon for messages
+                  IconButton(
+                    icon: Icon(Icons.message, color: Colors.black),
+                    onPressed: () {
+                      // Logique pour ouvrir la messagerie
+                    },
+                  ),
+
+                  // Icon for notifications
+                  IconButton(
+                    icon: Icon(Icons.notifications, color: Colors.black),
+                    onPressed: () {
+                      // Logique pour ouvrir les notifications
+                    },
+                  ),
+
                   Text(
                     userName,
                     style: TextStyle(fontSize: 14), // Smaller font size for username
                   ),
-                  SizedBox(width: 5), // Set a 5px margin between name and image
+                  // Profile picture with popup for logout
                   PopupMenuButton<String>(
                     onSelected: (value) {
                       if (value == 'logout') {
