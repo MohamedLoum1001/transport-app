@@ -2,17 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:tranport_app/Pages/ClientInterface/myDemands.dart';
 import 'package:tranport_app/Pages/ClientInterface/profile.dart';
 import 'package:tranport_app/Pages/ClientInterface/searchOffers.dart';
-import 'package:tranport_app/Pages/ClientInterface/home.dart'; // Importer la page Home
+import 'package:tranport_app/Pages/ClientInterface/home.dart';
 import 'dart:io';
 
 class ClientInterface extends StatelessWidget {
-  final File? profileImage; // Pass the profile image file
-  final String userName; // Pass the username
+  final File? profileImage;
+  final String userName;
 
   ClientInterface({this.profileImage, this.userName = 'John Doe'});
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    double fontSize = screenWidth < 400 ? 12 : 14;
+    double iconSize = screenWidth < 360 ? 18 : 24;
+    double avatarRadius = screenWidth < 400 ? 16 : 20;
+
     return DefaultTabController(
       length: 4,
       child: Scaffold(
@@ -20,37 +25,22 @@ class ClientInterface extends StatelessWidget {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Interface Client"),
+              Text("Interface Client", style: TextStyle(fontSize: fontSize + 4)),
               Row(
                 children: [
-                 
-                  SizedBox(width: 5), // Set a 5px margin between name and image
-
-                  // Icon for messages
                   IconButton(
-                    icon: Icon(Icons.message, color: Colors.black),
-                    onPressed: () {
-                      // Logique pour ouvrir la messagerie
-                    },
+                    icon: Icon(Icons.message, color: Colors.black, size: iconSize),
+                    onPressed: () {},
                   ),
-
-                  // Icon for notifications
                   IconButton(
-                    icon: Icon(Icons.notifications, color: Colors.black),
-                    onPressed: () {
-                      // Logique pour ouvrir les notifications
-                    },
+                    icon: Icon(Icons.notifications, color: Colors.black, size: iconSize),
+                    onPressed: () {},
                   ),
-
-                  Text(
-                    userName,
-                    style: TextStyle(fontSize: 14), // Smaller font size for username
-                  ),
-                  // Profile picture with popup for logout
+                  if (screenWidth >= 600)
+                    Text(userName, style: TextStyle(fontSize: fontSize)),
                   PopupMenuButton<String>(
                     onSelected: (value) {
                       if (value == 'logout') {
-                        // Déconnexion : rediriger vers la page de login
                         Navigator.pushReplacementNamed(context, '/login');
                       }
                     },
@@ -61,15 +51,15 @@ class ClientInterface extends StatelessWidget {
                           children: [
                             Icon(Icons.exit_to_app),
                             SizedBox(width: 10),
-                            Text('Déconnexion'),
+                            Text('Déconnexion', style: TextStyle(fontSize: fontSize)),
                           ],
                         ),
                       ),
                     ],
                     child: CircleAvatar(
-                      radius: 20,
+                      radius: avatarRadius,
                       backgroundImage: profileImage != null ? FileImage(profileImage!) : null,
-                      child: profileImage == null ? Icon(Icons.person) : null,
+                      child: profileImage == null ? Icon(Icons.person, size: iconSize) : null,
                     ),
                   ),
                 ],
@@ -78,19 +68,71 @@ class ClientInterface extends StatelessWidget {
           ),
           bottom: TabBar(
             tabs: [
-              Tab(text: 'Accueil'),
-              Tab(text: 'Offres'),
-              Tab(text: 'Demandes'),
-              Tab(text: 'Profil'),
+              Tab(
+                child: Column(
+                  children: [
+                    Icon(Icons.home, size: iconSize),
+                    Text('Accueil', style: TextStyle(fontSize: fontSize)),
+                  ],
+                ),
+              ),
+              Tab(
+                child: Column(
+                  children: [
+                    Icon(Icons.search, size: iconSize),
+                    Text('Offres', style: TextStyle(fontSize: fontSize)),
+                  ],
+                ),
+              ),
+              Tab(
+                child: Column(
+                  children: [
+                    Icon(Icons.assignment, size: iconSize),
+                    Text('Demandes', style: TextStyle(fontSize: fontSize)),
+                  ],
+                ),
+              ),
+              Tab(
+                child: Column(
+                  children: [
+                    Icon(Icons.person, size: iconSize),
+                    Text('Profil', style: TextStyle(fontSize: fontSize)),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
         body: TabBarView(
           children: [
-            Home(),
-            SearchOffers(),
-            MyDemands(),
-            Profile(),
+            SingleChildScrollView(child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height,
+                ),
+                child: Home(),
+              ),
+            ),
+            SingleChildScrollView(child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height,
+                ),
+                child: SearchOffers(),
+              ),
+            ),
+            SingleChildScrollView(child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height,
+                ),
+                child: MyDemands(),
+              ),
+            ),
+            SingleChildScrollView(child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height,
+                ),
+                child: Profile(),
+              ),
+            ),
           ],
         ),
       ),

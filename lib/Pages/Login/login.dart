@@ -23,9 +23,9 @@ class _LoginState extends State<Login> {
 
       if (nameController.text.isNotEmpty && passwordController.text.isNotEmpty) {
         // Exemple de redirection : transporteur
-        Navigator.pushReplacementNamed(context, '/transporterInterface');
+        // Navigator.pushReplacementNamed(context, '/transporterInterface');
         // Pour l'interface client, utilisez : 
-        // Navigator.pushReplacementNamed(context, '/clientInterface');
+        Navigator.pushReplacementNamed(context, '/clientInterface');
       } else {
         // Affiche une alerte si les champs sont vides
         showDialog(

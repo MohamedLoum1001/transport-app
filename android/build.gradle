@@ -1,11 +1,11 @@
 buildscript {
-    repositories{
+    repositories {
         google()
         jcenter()
     }
 
     dependencies {
-        classpath 'com.google.gms.google-services:4.4.2'
+        classpath 'com.google.gms:google-services:4.4.2' // Correction ici
     }
 }
 
@@ -18,7 +18,7 @@ allprojects {
 
 rootProject.buildDir = "../build"
 subprojects {
-    pro ject.buildDir = "${rootProject.buildDir}/${project.name}"
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
 subprojects {
     project.evaluationDependsOn(":app")
