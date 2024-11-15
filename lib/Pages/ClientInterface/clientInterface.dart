@@ -1,15 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // For Firebase Authentication
+import 'package:firebase_storage/firebase_storage.dart'; // For Firebase Storage
+import 'dart:io';
 import 'package:tranport_app/Pages/ClientInterface/myDemands.dart';
 import 'package:tranport_app/Pages/ClientInterface/profile.dart';
 import 'package:tranport_app/Pages/ClientInterface/searchOffers.dart';
 import 'package:tranport_app/Pages/ClientInterface/home.dart';
-import 'dart:io';
 
 class ClientInterface extends StatelessWidget {
   final File? profileImage;
   final String userName;
 
   ClientInterface({this.profileImage, this.userName = 'John Doe'});
+
+  // Firebase Auth instance
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Firebase Storage instance
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+
+  Future<void> _logout(BuildContext context) async {
+    try {
+      await _auth.signOut();  // Sign out from Firebase
+      Navigator.pushReplacementNamed(context, '/login');  // Navigate to login page
+    } catch (e) {
+      print("Error during logout: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +58,7 @@ class ClientInterface extends StatelessWidget {
                   PopupMenuButton<String>(
                     onSelected: (value) {
                       if (value == 'logout') {
-                        Navigator.pushReplacementNamed(context, '/login');
+                        _logout(context);  // Call logout function
                       }
                     },
                     itemBuilder: (context) => [
