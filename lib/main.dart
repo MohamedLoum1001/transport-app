@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'dart:async'; // Pour utiliser Timer
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 
 import 'package:tranport_app/Pages/ClientInterface/clientInterface.dart';
 import 'package:tranport_app/Pages/Login/Login.dart';
@@ -19,7 +21,7 @@ void main() async {
         apiKey: "AIzaSyAhDUrAd5SMYGI02JhN0fTNW6ZvpC_F7P4",
         authDomain: "transport-app-d3277.firebaseapp.com",
         projectId: "transport-app-d3277",
-        storageBucket: "transport-app-d3277.appspot.com", // Correction du lien du storage bucket
+        storageBucket: "transport-app-d3277.appspot.com",
         messagingSenderId: "181272048951",
         appId: "1:181272048951:web:bcc9bbdf4ea5535a9516b2",
       ),
@@ -64,10 +66,20 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
-    // Démarre un temporisateur de 2 secondes avant de naviguer vers la page de connexion
-    Timer(Duration(seconds: 2), () {
+    _checkLoginStatus();
+  }
+
+  // Vérifie si l'utilisateur est déjà connecté
+  Future<void> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    // Vérifie également l'état de connexion Firebase
+    if (isLoggedIn && FirebaseAuth.instance.currentUser != null) {
+      Navigator.of(context).pushReplacementNamed('/clientInterface');
+    } else {
       Navigator.of(context).pushReplacementNamed('/login');
-    });
+    }
   }
 
   @override
