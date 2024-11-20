@@ -17,16 +17,15 @@ class _RegisterState extends State<Register> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  String selectedUserType = ''; // État par défaut vide pour forcer la sélection
+  String selectedUserType = '';
 
-  // État pour afficher ou masquer le mot de passe
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
+  bool isLoading = false; // Indique si le processus d'inscription est en cours
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Méthode pour vider les champs après inscription réussie
   void clearFields() {
     nameController.clear();
     givenNameController.clear();
@@ -35,7 +34,7 @@ class _RegisterState extends State<Register> {
     passwordController.clear();
     confirmPasswordController.clear();
     setState(() {
-      selectedUserType = ''; // Réinitialise le type de profil par défaut
+      selectedUserType = '';
     });
   }
 
@@ -43,6 +42,10 @@ class _RegisterState extends State<Register> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
+    setState(() {
+      isLoading = true; // Activation du loader
+    });
 
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
@@ -59,10 +62,14 @@ class _RegisterState extends State<Register> {
         'uid': userCredential.user!.uid,
       });
 
-      clearFields(); // Vide les champs après inscription réussie
-      Navigator.pushReplacementNamed(context, '/login'); // Redirige vers la page de connexion
+      clearFields();
+      Navigator.pushReplacementNamed(context, '/login');
     } catch (e) {
       showErrorDialog("Erreur d'inscription : ${e.toString()}");
+    } finally {
+      setState(() {
+        isLoading = false; // Désactivation du loader
+      });
     }
   }
 
@@ -86,7 +93,7 @@ class _RegisterState extends State<Register> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Inscription')),
-      body: SingleChildScrollView( // Permet le défilement en cas de contenu trop grand
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
@@ -239,11 +246,16 @@ class _RegisterState extends State<Register> {
                   },
                 ),
                 SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: registerUser,
-                  child: Text('S\'inscrire'),
-                ),
+
+                // Bouton S'inscrire avec loader
+                isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : ElevatedButton(
+                        onPressed: registerUser,
+                        child: Text('S\'inscrire'),
+                      ),
                 SizedBox(height: 16.0),
+
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(

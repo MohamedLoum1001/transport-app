@@ -41,29 +41,27 @@ class _ProfileState extends State<Profile> {
             SizedBox(height: 20),
 
             // Affichage de l'image de profil
-            // Center(
-            //   child: CircleAvatar(
-            //     radius: 50,
-            //     backgroundImage:
-            //         _profileImage != null ? FileImage(_profileImage!) : null,
-            //     child: _profileImage == null
-            //         ? Icon(Icons.person, size: 50)
-            //         : null,
-            //   ),
-            // ),
-
+            Center(
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage:
+                    _profileImage != null ? FileImage(_profileImage!) : null,
+                child: _profileImage == null
+                    ? Icon(Icons.person, size: 50)
+                    : null,
+              ),
+            ),
             SizedBox(height: 20),
 
-            // Bouton pour modifier le profil (inclut modification de l'image)
+            // Bouton pour modifier le profil
             ElevatedButton(
               onPressed: () {
                 _showEditProfileDialog(context);
               },
               child: Text('Modifier le Profil'),
             ),
-            
             SizedBox(height: 10),
-            
+
             // Bouton pour modifier le mot de passe
             ElevatedButton(
               onPressed: () {
@@ -77,7 +75,7 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  // Dialog pour modifier le profil, incluant l'image
+  // Dialog pour modifier le profil
   void _showEditProfileDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -87,7 +85,6 @@ class _ProfileState extends State<Profile> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Affichage de l'image de profil avec un bouton pour la modifier
               Center(
                 child: Stack(
                   children: [
@@ -111,8 +108,6 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
               SizedBox(height: 10),
-
-              // Champs pour modifier le nom, email, etc.
               TextField(
                 decoration: InputDecoration(labelText: 'Nom'),
               ),
@@ -134,8 +129,9 @@ class _ProfileState extends State<Profile> {
             ),
             ElevatedButton(
               onPressed: () {
-                // Logique pour enregistrer les modifications du profil
+                // Logique pour enregistrer les modifications
                 Navigator.of(context).pop();
+                _showAlert(context, 'Profil mis à jour avec succès !');
               },
               child: Text('Enregistrer'),
             ),
@@ -180,12 +176,23 @@ class _ProfileState extends State<Profile> {
               onPressed: () {
                 // Logique pour enregistrer le nouveau mot de passe
                 Navigator.of(context).pop();
+                _showAlert(context, 'Mot de passe modifié avec succès !');
               },
               child: Text('Enregistrer'),
             ),
           ],
         );
       },
+    );
+  }
+
+  // Méthode pour afficher une alerte
+  void _showAlert(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 3),
+      ),
     );
   }
 }

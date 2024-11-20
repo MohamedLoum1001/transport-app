@@ -1,15 +1,16 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    // Le plugin Gradle Flutter doit être appliqué après les plugins Android et Kotlin.
     id "dev.flutter.flutter-gradle-plugin"
-    id 'com.google.gms.google-services'
+    id "com.google.gms.google-services"
 }
 
 android {
     namespace = "com.example.tranport_app"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    compileSdk = 34 // Passez à 34 pour éviter les problèmes avec les dépendances Firebase.
+
+    ndkVersion = "23.1.7779620" // Assurez-vous que cette version correspond à celle installée.
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -17,26 +18,39 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = "1.8" // Correspond au support Kotlin moderne.
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.tranport_app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        minSdk = 23 // Assurez-vous que votre version minSdk est >= 23 pour Firebase.
+        targetSdk = 34 // Alignez targetSdk avec compileSdk.
+        versionCode = 1 // Mettez à jour en fonction de vos versions d'app.
+        versionName = "1.0"
     }
 
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+    release {
+        // Activez ou désactivez la minification du code avec ProGuard.
+        minifyEnabled false
+
+        // Désactivez la suppression des ressources inutilisées.
+        shrinkResources false
+
+        // Ajoutez des fichiers ProGuard pour le mode release.
+        proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+    }
+}
+
+
+    signingConfigs {
+        debug {
+            storeFile file('C:/Users/LENOVO T480S/Desktop/tranport_app/android/app/debug.keystore')
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
         }
+        // Ajoutez ici une configuration pour `release` si nécessaire.
     }
 }
 
@@ -45,5 +59,13 @@ flutter {
 }
 
 dependencies {
-  implementation platform('com.google.firebase:firebase-bom:33.5.1')
+    // Utilisation de la plateforme Firebase BOM pour garantir la compatibilité des versions.
+    implementation platform("com.google.firebase:firebase-bom:33.5.1")
+    implementation "com.google.firebase:firebase-auth-ktx" // Authentification.
+    implementation "com.google.firebase:firebase-firestore-ktx" // Firestore.
+    implementation "com.google.firebase:firebase-storage-ktx" // Storage (ajouté si utilisé).
+    implementation "com.google.firebase:firebase-analytics-ktx" // Analytics (optionnel).
 }
+
+// Ajoutez ceci à la fin si `google-services.json` est utilisé pour Firebase.
+apply plugin: 'com.google.gms.google-services'
