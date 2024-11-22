@@ -58,6 +58,8 @@ class _RegisterState extends State<Register> {
         'prenom': givenNameController.text,
         'telephone': phoneController.text,
         'email': emailController.text,
+        'password': passwordController.text,
+        'confirmPassword': confirmPasswordController.text,
         'type': selectedUserType,
         'uid': userCredential.user!.uid,
       });

@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:tranport_app/Pages/ClientInterface/myDemands.dart';
 import 'package:tranport_app/Pages/ClientInterface/profile.dart';
 import 'package:tranport_app/Pages/ClientInterface/searchOffers.dart';
-import 'package:tranport_app/Pages/ClientInterface/home.dart';
+// import 'package:tranport_app/Pages/ClientInterface/home.dart';
 
 class ClientInterface extends StatefulWidget {
   final File? profileImage;
@@ -62,7 +62,7 @@ class _ClientInterfaceState extends State<ClientInterface> {
           ],
           bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.home), text: 'Accueil'),
+              // Tab(icon: Icon(Icons.home), text: 'Accueil'),
               Tab(icon: Icon(Icons.search), text: 'Offres'),
               Tab(icon: Icon(Icons.assignment), text: 'Demandes'),
               Tab(icon: Icon(Icons.person), text: 'Profil'),
@@ -71,7 +71,7 @@ class _ClientInterfaceState extends State<ClientInterface> {
         ),
         body: TabBarView(
           children: [
-            Home(),
+            // Home(),
             SearchOffers(),
             MyDemands(),
             Profile(),
@@ -90,24 +90,19 @@ class _ClientInterfaceState extends State<ClientInterface> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.home),
-                title: Text('Accueil'),
-                onTap: () => DefaultTabController.of(context)?.animateTo(0),
-              ),
-              ListTile(
                 leading: Icon(Icons.search),
                 title: Text('Offres'),
-                onTap: () => DefaultTabController.of(context)?.animateTo(1),
+                onTap: () => DefaultTabController.of(context)?.animateTo(0),
               ),
               ListTile(
                 leading: Icon(Icons.assignment),
                 title: Text('Demandes'),
-                onTap: () => DefaultTabController.of(context)?.animateTo(2),
+                onTap: () => DefaultTabController.of(context)?.animateTo(1),
               ),
               ListTile(
                 leading: Icon(Icons.person),
                 title: Text('Profil'),
-                onTap: () => DefaultTabController.of(context)?.animateTo(3),
+                onTap: () => DefaultTabController.of(context)?.animateTo(2),
               ),
               Divider(),
               ListTile(
