@@ -15,6 +15,11 @@ class _MessagesPageState extends State<MessagesPage> {
     'Je vais bien aussi, merci.',
   ];
 
+  // Utilisateur fictif (remplacez avec les données réelles de l'utilisateur)
+  String userName = 'Jean Dupont';
+  String userStatus = 'En ligne'; // Statut de l'utilisateur
+  String userImageUrl = ''; // URL de la photo de profil (ajoutez une URL d'image si disponible)
+
   void _sendMessage() {
     if (_messageController.text.isNotEmpty) {
       setState(() {
@@ -32,6 +37,45 @@ class _MessagesPageState extends State<MessagesPage> {
       ),
       body: Column(
         children: [
+          // Affichage du profil de l'utilisateur
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 30,
+                  backgroundImage: userImageUrl.isNotEmpty
+                      ? NetworkImage(userImageUrl)
+                      : null,
+                  child: userImageUrl.isEmpty
+                      ? Icon(Icons.person, size: 30)
+                      : null,
+                ),
+                SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      userName,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    Text(
+                      userStatus,
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Divider(), // Séparateur entre le profil et la liste des messages
+
           // Liste des messages
           Expanded(
             child: ListView.builder(
@@ -43,6 +87,7 @@ class _MessagesPageState extends State<MessagesPage> {
               },
             ),
           ),
+          
           // Zone de saisie de message
           Padding(
             padding: const EdgeInsets.all(8.0),
