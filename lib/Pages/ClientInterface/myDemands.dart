@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tranport_app/Pages/MessagesPage/messagesPage.dart';
 import 'package:uuid/uuid.dart'; // Pour générer des ID uniques
 
 class MyDemands extends StatefulWidget {
@@ -36,6 +37,7 @@ class _MyDemandsState extends State<MyDemands> {
       appBar: AppBar(title: Text('Mes Demandes')),
       body: Column(
         children: [
+          // StreamBuilder pour afficher les demandes existantes
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: _firestore.collection('demandes').snapshots(),
@@ -109,32 +111,48 @@ class _MyDemandsState extends State<MyDemands> {
                                 ),
                               ],
                             ),
-                            // Boutons pour contacter, modifier, ou supprimer
+                            // Boutons avec des icônes et des bordures
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                ElevatedButton(
+                                OutlinedButton(
                                   onPressed: () {
-                                    // Action pour contacter l'utilisateur
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text('Contactez-moi pour cette demande.')),
+                                    // Naviguer vers la page des messages
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => MessagesPage()),  // Redirection vers la page des messages
                                     );
                                   },
-                                  child: Text('Contactez-moi'),
+                                  child: Icon(Icons.contact_mail, color: Colors.green),  // Couleur verte
+                                  style: OutlinedButton.styleFrom(
+                                    shape: CircleBorder(),
+                                    padding: EdgeInsets.all(16),
+                                    side: BorderSide(color: Colors.green),  // Bordure verte
+                                  ),
                                 ),
-                                ElevatedButton(
+                                OutlinedButton(
                                   onPressed: () {
                                     // Action pour modifier la demande
                                     _showEditDemandForm(demandId, demand);
                                   },
-                                  child: Text('Modifier ma Demande'),
+                                  child: Icon(Icons.edit, color: const Color.fromRGBO(219, 202, 52, 1)),  // Couleur jaune
+                                  style: OutlinedButton.styleFrom(
+                                    shape: CircleBorder(),
+                                    padding: EdgeInsets.all(16),
+                                    side: BorderSide(color: const Color.fromRGBO(219, 202, 52, 1)),  // Bordure jaune
+                                  ),
                                 ),
-                                ElevatedButton(
+                                OutlinedButton(
                                   onPressed: () {
                                     // Action pour supprimer la demande
                                     _deleteDemand(demandId);
                                   },
-                                  child: Text('Supprimer ma Demande'),
+                                  child: Icon(Icons.delete, color: Colors.red),  // Couleur rouge
+                                  style: OutlinedButton.styleFrom(
+                                    shape: CircleBorder(),
+                                    padding: EdgeInsets.all(16),
+                                    side: BorderSide(color: Colors.red),  // Bordure rouge
+                                  ),
                                 ),
                               ],
                             ),
@@ -181,10 +199,6 @@ class _MyDemandsState extends State<MyDemands> {
                   onChanged: (value) {
                     selectedCargoType = value;
                   },
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Dimensions (L x l x h)'),
-                  keyboardType: TextInputType.text,
                 ),
                 DropdownButtonFormField<String>(
                   decoration: InputDecoration(labelText: 'Type de Camion'),
@@ -271,16 +285,83 @@ class _MyDemandsState extends State<MyDemands> {
 
   // Fonction pour afficher le formulaire de modification
   void _showEditDemandForm(String demandId, Map<String, dynamic> demand) {
-    // Vous pouvez ajouter un formulaire pour modifier les données ici
+    // Récupérer les valeurs existantes pour les afficher dans le formulaire
+    selectedCargoType = demand['cargoType'];
+    selectedTruckType = demand['truckType'];
+    pickupDate = demand['pickupDate'];
+    pickupLocation = demand['pickupLocation'];
+    destinationLocation = demand['destinationLocation'];
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Modifier ma Demande'),
-        content: Column(
-          children: [
-            // Ajoutez ici les champs pour modifier la demande (ex: type de camion, lieu de ramassage, etc.)
-            Text('Formulaire de modification pour la demande $demandId'),
-          ],
+        content: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(labelText: 'Type de Marchandise'),
+                  value: selectedCargoType,
+                  items: cargoTypes.map((String type) {
+                    return DropdownMenuItem<String>(
+                      value: type,
+                      child: Text(type),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    selectedCargoType = value;
+                  },
+                ),
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(labelText: 'Type de Camion'),
+                  value: selectedTruckType,
+                  items: truckTypes.map((String type) {
+                    return DropdownMenuItem<String>(
+                      value: type,
+                      child: Text(type),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    selectedTruckType = value;
+                  },
+                ),
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'Date de Ramassage'),
+                  keyboardType: TextInputType.datetime,
+                  initialValue: pickupDate,
+                  onTap: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime(2101),
+                    );
+                    if (pickedDate != null) {
+                      pickupDate = pickedDate.toString();
+                    }
+                  },
+                ),
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'Lieu de Ramassage'),
+                  keyboardType: TextInputType.text,
+                  initialValue: pickupLocation,
+                  onChanged: (value) {
+                    pickupLocation = value;
+                  },
+                ),
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'Lieu de Destination'),
+                  keyboardType: TextInputType.text,
+                  initialValue: destinationLocation,
+                  onChanged: (value) {
+                    destinationLocation = value;
+                  },
+                ),
+              ],
+            ),
+          ),
         ),
         actions: [
           TextButton(
@@ -291,12 +372,28 @@ class _MyDemandsState extends State<MyDemands> {
           ),
           ElevatedButton(
             onPressed: () {
-              // Mettre à jour la demande ici avec les nouvelles valeurs
+              _updateDemand(demandId);
+              Navigator.pop(context);
             },
-            child: Text('Modifier'),
+            child: Text('Mettre à jour'),
           ),
         ],
       ),
+    );
+  }
+
+  // Fonction pour mettre à jour la demande
+  Future<void> _updateDemand(String demandId) async {
+    await _firestore.collection('demandes').doc(demandId).update({
+      'cargoType': selectedCargoType,
+      'truckType': selectedTruckType,
+      'pickupDate': pickupDate,
+      'pickupLocation': pickupLocation,
+      'destinationLocation': destinationLocation,
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Demande mise à jour avec succès')),
     );
   }
 

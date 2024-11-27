@@ -44,13 +44,19 @@ android {
 
 
     signingConfigs {
-        debug {
-            storeFile file('C:/Users/LENOVO T480S/Desktop/tranport_app/android/app/debug.keystore')
+         debug {
+            storeFile file("C:/Users/LENOVO T480S/.android/debug.keystore")
             storePassword "android"
-            keyAlias "androiddebugkey"
+            keyAlias "newdebugkey2024"  // Mettez ici l'alias correct
             keyPassword "android"
         }
         // Ajoutez ici une configuration pour `release` si nécessaire.
+        
+    }
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
     }
 }
 

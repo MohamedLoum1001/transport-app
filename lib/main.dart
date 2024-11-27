@@ -14,20 +14,24 @@ import 'package:tranport_app/Pages/ForgotPassword/forgotPassword.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Initialise les widgets Flutter
 
-  // Initialisation de Firebase avec configuration différente pour le web
-  if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyAhDUrAd5SMYGI02JhN0fTNW6ZvpC_F7P4",
-        authDomain: "transport-app-d3277.firebaseapp.com",
-        projectId: "transport-app-d3277",
-        storageBucket: "transport-app-d3277.appspot.com",
-        messagingSenderId: "181272048951",
-        appId: "1:181272048951:web:bcc9bbdf4ea5535a9516b2",
-      ),
-    );
-  } else {
-    await Firebase.initializeApp(); // Pour mobile et autres plateformes
+  try {
+    // Initialisation de Firebase avec configuration différente pour le web
+    if (kIsWeb) {
+      await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: "AIzaSyAhDUrAd5SMYGI02JhN0fTNW6ZvpC_F7P4",
+          authDomain: "transport-app-d3277.firebaseapp.com",
+          projectId: "transport-app-d3277",
+          storageBucket: "transport-app-d3277.appspot.com",
+          messagingSenderId: "181272048951",
+          appId: "1:181272048951:web:bcc9bbdf4ea5535a9516b2",
+        ),
+      );
+    } else {
+      await Firebase.initializeApp(); // Pour mobile et autres plateformes
+    }
+  } catch (e) {
+    print("Erreur d'initialisation Firebase: $e");
   }
 
   runApp(MyApp());
