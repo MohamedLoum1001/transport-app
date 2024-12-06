@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:async';
 
 import 'package:tranport_app/Pages/ClientInterface/clientInterface.dart';
 import 'package:tranport_app/Pages/Login/Login.dart';
@@ -75,13 +74,20 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   // Vérifie si l'utilisateur est déjà connecté
   Future<void> _checkLoginStatus() async {
+    // Vérifier si l'utilisateur est connecté via Firebase
+    User? currentUser = FirebaseAuth.instance.currentUser;
     final prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
-    // Vérifie également l'état de connexion Firebase
-    if (isLoggedIn && FirebaseAuth.instance.currentUser != null) {
-      Navigator.of(context).pushReplacementNamed('/clientInterface');
+    if (currentUser != null && isLoggedIn) {
+      // Redirige vers l'interface client ou transporteur
+      if (currentUser.email == 'transporteur@example.com') {
+        Navigator.of(context).pushReplacementNamed('/transporterInterface');
+      } else {
+        Navigator.of(context).pushReplacementNamed('/clientInterface');
+      }
     } else {
+      // Si non connecté, redirige vers la page de connexion
       Navigator.of(context).pushReplacementNamed('/login');
     }
   }
