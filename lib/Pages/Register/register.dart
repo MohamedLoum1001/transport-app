@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart'; // Ajoutez cet import
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tranport_app/Components/Boutons/boutonReutilisable.dart';
 import 'package:tranport_app/Pages/Login/Login.dart';
 
 class Register extends StatefulWidget {
@@ -21,10 +22,15 @@ class _RegisterState extends State<Register> {
 
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
-  bool isLoading = false; // Indique si le processus d'inscription est en cours
+  bool isLoading = false;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   void clearFields() {
     nameController.clear();
@@ -44,22 +50,22 @@ class _RegisterState extends State<Register> {
     }
 
     setState(() {
-      isLoading = true; // Activation du loader
+      isLoading = true;
     });
 
     try {
+      // Créer un utilisateur avec Firebase Authentication
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
 
+      // Enregistrer les informations de l'utilisateur dans Firestore
       await _firestore.collection('users').doc(userCredential.user!.uid).set({
         'nom': nameController.text,
         'prenom': givenNameController.text,
         'telephone': phoneController.text,
         'email': emailController.text,
-        'password': passwordController.text,
-        'confirmPassword': confirmPasswordController.text,
         'type': selectedUserType,
         'uid': userCredential.user!.uid,
       });
@@ -70,7 +76,7 @@ class _RegisterState extends State<Register> {
       showErrorDialog("Erreur d'inscription : ${e.toString()}");
     } finally {
       setState(() {
-        isLoading = false; // Désactivation du loader
+        isLoading = false;
       });
     }
   }
@@ -82,9 +88,9 @@ class _RegisterState extends State<Register> {
         title: Text("Erreur d'inscription"),
         content: Text(message),
         actions: [
-          TextButton(
+          BoutonReutilisable(
+            text: "OK",
             onPressed: () => Navigator.pop(context),
-            child: Text("OK"),
           ),
         ],
       ),
@@ -248,24 +254,23 @@ class _RegisterState extends State<Register> {
                   },
                 ),
                 SizedBox(height: 16.0),
-
-                // Bouton S'inscrire avec loader
                 isLoading
                     ? Center(child: CircularProgressIndicator())
-                    : ElevatedButton(
+                    : BoutonReutilisable(
+                        text: "S'inscrire",
                         onPressed: registerUser,
-                        child: Text('S\'inscrire'),
                       ),
                 SizedBox(height: 16.0),
-
-                ElevatedButton(
+                BoutonReutilisable(
+                  text: "Se connecter",
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => Login()),
                     );
                   },
-                  child: Text('Se connecter'),
+                  backgroundColor: Colors.grey[300]!,
+                  textColor: Colors.purple,
                 ),
               ],
             ),

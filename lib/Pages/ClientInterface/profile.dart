@@ -1,7 +1,7 @@
-// Pages/ClientInterface/profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:tranport_app/Components/Boutons/boutonReutilisable.dart'; // Assurez-vous d'importer votre composant BoutonReutilisable
 
 class Profile extends StatefulWidget {
   @override
@@ -53,21 +53,29 @@ class _ProfileState extends State<Profile> {
             ),
             SizedBox(height: 20),
 
-            // Bouton pour modifier le profil
-            ElevatedButton(
-              onPressed: () {
-                _showEditProfileDialog(context);
-              },
-              child: Text('Modifier le Profil'),
+            // Bouton pour modifier le profil centré
+            Center(
+              child: BoutonReutilisable(
+                text: 'Modifier le Profil',
+                onPressed: () {
+                  _showEditProfileDialog(context);
+                },
+                backgroundColor: Colors.blueAccent,
+                textColor: Colors.white,
+              ),
             ),
             SizedBox(height: 10),
 
-            // Bouton pour modifier le mot de passe
-            ElevatedButton(
-              onPressed: () {
-                _showChangePasswordDialog(context);
-              },
-              child: Text('Modifier le Mot de Passe'),
+            // Bouton pour modifier le mot de passe centré
+            Center(
+              child: BoutonReutilisable(
+                text: 'Modifier le Mot de Passe',
+                onPressed: () {
+                  _showChangePasswordDialog(context);
+                },
+                backgroundColor: Colors.blueAccent,
+                textColor: Colors.white,
+              ),
             ),
           ],
         ),
@@ -127,13 +135,17 @@ class _ProfileState extends State<Profile> {
               },
               child: Text('Annuler'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                // Logique pour enregistrer les modifications
-                Navigator.of(context).pop();
-                _showAlert(context, 'Profil mis à jour avec succès !');
-              },
-              child: Text('Enregistrer'),
+            Center(
+              child: BoutonReutilisable(
+                text: 'Enregistrer',
+                onPressed: () {
+                  // Logique pour enregistrer les modifications
+                  Navigator.of(context).pop();
+                  _showAlert(context, 'Profil mis à jour avec succès !');
+                },
+                backgroundColor: Colors.blueAccent,
+                textColor: Colors.white,
+              ),
             ),
           ],
         );
@@ -172,13 +184,17 @@ class _ProfileState extends State<Profile> {
               },
               child: Text('Annuler'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                // Logique pour enregistrer le nouveau mot de passe
-                Navigator.of(context).pop();
-                _showAlert(context, 'Mot de passe modifié avec succès !');
-              },
-              child: Text('Enregistrer'),
+            Center(
+              child: BoutonReutilisable(
+                text: 'Enregistrer',
+                onPressed: () {
+                  // Logique pour enregistrer le nouveau mot de passe
+                  Navigator.of(context).pop();
+                  _showAlert(context, 'Mot de passe modifié avec succès !');
+                },
+                backgroundColor: Colors.blueAccent,
+                textColor: Colors.white,
+              ),
             ),
           ],
         );

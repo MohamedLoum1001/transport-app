@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tranport_app/Components/Boutons/boutonReutilisable.dart';
 
 class ForgotPassword extends StatefulWidget {
   @override
@@ -89,20 +90,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             ),
             SizedBox(height: 20),
 
-            // Bouton Réinitialiser le mot de passe
-            ElevatedButton(
+            // Bouton Réinitialiser le mot de passe avec BoutonReutilisable
+            BoutonReutilisable(
+              text: 'Réinitialiser le mot de passe',
               onPressed: resetPassword,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
-                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Text(
-                'Réinitialiser le mot de passe',
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
             ),
           ],
         ),

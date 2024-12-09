@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tranport_app/Components/Boutons/boutonReutilisable.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -60,7 +61,7 @@ class _LoginState extends State<Login> {
     }
   }
 
-  // Méthode pour afficher les erreurs
+  // Méthode pour afficher la boîte de dialogue d'erreur
   void showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -88,7 +89,7 @@ class _LoginState extends State<Login> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Champ Email avec style personnalisé
+            // Champ email avec style personnalisé
             TextField(
               controller: emailController,
               decoration: InputDecoration(
@@ -104,7 +105,7 @@ class _LoginState extends State<Login> {
             ),
             SizedBox(height: 20),
 
-            // Champ Mot de passe avec style personnalisé
+            // Champ mot de passe avec style personnalisé
             TextField(
               controller: passwordController,
               decoration: InputDecoration(
@@ -130,25 +131,17 @@ class _LoginState extends State<Login> {
             ),
             SizedBox(height: 20),
 
-            // Bouton Connexion
+            // Bouton de connexion avec le composant bouton réutilisable
             isLoading
                 ? CircularProgressIndicator()
-                : ElevatedButton(
+                : BoutonReutilisable(
                     onPressed: loginUser,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple,
-                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      'Se connecter',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
+                    text: 'Se connecter', // Utilisez 'text' au lieu de 'child'
+                    backgroundColor: Colors.purple,  // Couleur d'arrière-plan
+                    textColor: Colors.white,         // Couleur du texte
                   ),
 
-            // Lien pour s'inscrire
+            // Lien vers la page d'inscription
             TextButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/register');
@@ -159,7 +152,7 @@ class _LoginState extends State<Login> {
               ),
             ),
 
-            // Lien pour mot de passe oublié
+            // Lien vers la page de mot de passe oublié
             TextButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/forgotPassword');
