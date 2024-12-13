@@ -4,7 +4,7 @@ import 'dart:io';
 
 // Import des sous-pages
 import 'package:tranport_app/Pages/ClientInterface/myDemands.dart';
-import 'package:tranport_app/Pages/ClientInterface/profile.dart';
+import 'package:tranport_app/Components/Profiles/profile.dart';
 import 'package:tranport_app/Pages/ClientInterface/searchOffers.dart';
 import 'package:tranport_app/Pages/ClientInterface/home.dart';
 // import 'package:tranport_app/Pages/MessagesPage/messagesPage.dart';
