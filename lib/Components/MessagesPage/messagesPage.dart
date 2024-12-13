@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MessagesPage extends StatefulWidget {
   final Map<String, dynamic> demandeData;
@@ -14,11 +15,65 @@ class MessagesPage extends StatefulWidget {
 class _MessagesPageState extends State<MessagesPage> {
   final TextEditingController _messageController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  String userName = 'Jean Dupont';
+  String userName = '';
   String userStatus = 'En ligne';
   String userImageUrl = '';
-  String userId = 'user_123'; // ID utilisateur unique
+  String userId = ''; // ID utilisateur
+  late DocumentReference userRef;
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserInfo();
+    _updateUserStatus(true); // Marque l'utilisateur comme en ligne
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _updateUserStatus(false); // Marque l'utilisateur comme hors ligne quand il quitte la page
+  }
+
+  Future<void> _getUserInfo() async {
+    try {
+      // Récupérer l'utilisateur connecté
+      User? user = _auth.currentUser;
+      if (user != null) {
+        setState(() {
+          userId = user.uid;
+        });
+
+        // Récupérer les données de l'utilisateur depuis Firestore
+        DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+          var userData = userDoc.data() as Map<String, dynamic>;
+          setState(() {
+            userName = '${userData['prenom']} ${userData['nom']}'; // Prénom et Nom
+            userImageUrl = userData['imageUrl'] ?? ''; // URL de l'image de profil, si disponible
+          });
+        }
+
+        // Référence du document utilisateur pour mettre à jour l'état en ligne
+        userRef = _firestore.collection('users').doc(user.uid);
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération des données utilisateur : $e');
+    }
+  }
+
+  // Mise à jour de l'état en ligne / hors ligne
+  Future<void> _updateUserStatus(bool isOnline) async {
+    try {
+      await userRef.update({
+        'isOnline': isOnline,
+        'lastSeen': isOnline ? FieldValue.serverTimestamp() : null,
+      });
+    } catch (e) {
+      print('Erreur lors de la mise à jour du statut en ligne : $e');
+    }
+  }
 
   Future<void> _sendMessage() async {
     if (_messageController.text.isNotEmpty) {
@@ -76,7 +131,7 @@ class _MessagesPageState extends State<MessagesPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        userName,
+                        userName.isNotEmpty ? userName : 'Utilisateur',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -85,7 +140,7 @@ class _MessagesPageState extends State<MessagesPage> {
                       Text(
                         userStatus,
                         style: TextStyle(
-                          color: Colors.green,
+                          color: userStatus == 'En ligne' ? Colors.green : Colors.red,
                           fontSize: 14,
                         ),
                       ),
