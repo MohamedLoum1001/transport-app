@@ -21,12 +21,15 @@ class _SearchOffersState extends State<SearchOffers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Recherche d\'offres'),
+        title: Text('Recherche d\'offres', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+        centerTitle: true,
+        backgroundColor: Colors.deepPurpleAccent, // AppBar color
+        elevation: 10,
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: IconButton(
-              icon: Icon(Icons.search),
+              icon: Icon(Icons.search, color: Colors.white),
               onPressed: () {
                 showSearch(
                   context: context,
@@ -37,70 +40,99 @@ class _SearchOffersState extends State<SearchOffers> {
           ),
         ],
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('offers')
-            .where('description', isGreaterThanOrEqualTo: _searchQuery)
-            .where('description', isLessThan: _searchQuery + 'z')
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _filterOffers,
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.search),
+                labelText: 'Rechercher une offre',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25),
+                  borderSide: BorderSide(color: Colors.deepPurpleAccent),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25),
+                  borderSide: BorderSide(color: Colors.deepPurpleAccent),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('offers')
+                  .where('description', isGreaterThanOrEqualTo: _searchQuery)
+                  .where('description', isLessThan: _searchQuery + 'z')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
 
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text("Aucune offre disponible."));
-          }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text("Aucune offre disponible."));
+                }
 
-          final offers = snapshot.data!.docs;
+                final offers = snapshot.data!.docs;
 
-          return ListView.builder(
-            itemCount: offers.length,
-            itemBuilder: (context, index) {
-              final offer = offers[index];
-              return Card(
-                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                child: ListTile(
-                  title: Text(offer['description'] ?? "Sans description"),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Date : ${offer['date'] ?? "Non spécifiée"}"),
-                      Text("Statut : ${offer['status'] ?? "Non spécifié"}"),
-                    ],
-                  ),
-                  trailing: Icon(Icons.arrow_forward, color: Colors.blue),
-                  onTap: () {
-                    // Action supplémentaire sur l'offre si nécessaire
-                    showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        title: Text("Détails de l'offre"),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
+                return ListView.builder(
+                  itemCount: offers.length,
+                  itemBuilder: (context, index) {
+                    final offer = offers[index];
+                    return Card(
+                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 6,
+                      child: ListTile(
+                        title: Text(offer['description'] ?? "Sans description", style: TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Description : ${offer['description'] ?? "Non spécifiée"}"),
                             Text("Date : ${offer['date'] ?? "Non spécifiée"}"),
                             Text("Statut : ${offer['status'] ?? "Non spécifié"}"),
                           ],
                         ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text("Fermer"),
-                          ),
-                        ],
+                        trailing: Icon(Icons.arrow_forward, color: Colors.blue),
+                        onTap: () {
+                          // Action supplémentaire sur l'offre si nécessaire
+                          showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              title: Text("Détails de l'offre", style: TextStyle(fontWeight: FontWeight.bold)),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Description : ${offer['description'] ?? "Non spécifiée"}"),
+                                  Text("Date : ${offer['date'] ?? "Non spécifiée"}"),
+                                  Text("Statut : ${offer['status'] ?? "Non spécifié"}"),
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("Fermer", style: TextStyle(color: Colors.deepPurpleAccent)),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     );
                   },
-                ),
-              );
-            },
-          );
-        },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -151,13 +183,13 @@ class OfferSearchDelegate extends SearchDelegate {
           itemBuilder: (context, index) {
             final offer = offers[index];
             return ListTile(
-              title: Text(offer['description'] ?? "Sans description"),
+              title: Text(offer['description'] ?? "Sans description", style: TextStyle(fontWeight: FontWeight.bold)),
               subtitle: Text("Date : ${offer['date'] ?? "Non spécifiée"}"),
               onTap: () {
                 showDialog(
                   context: context,
                   builder: (_) => AlertDialog(
-                    title: Text("Détails de l'offre"),
+                    title: Text("Détails de l'offre", style: TextStyle(fontWeight: FontWeight.bold)),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -171,7 +203,7 @@ class OfferSearchDelegate extends SearchDelegate {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text("Fermer"),
+                        child: Text("Fermer", style: TextStyle(color: Colors.deepPurpleAccent)),
                       ),
                     ],
                   ),

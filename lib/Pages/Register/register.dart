@@ -54,13 +54,11 @@ class _RegisterState extends State<Register> {
     });
 
     try {
-      // Créer un utilisateur avec Firebase Authentication
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
 
-      // Enregistrer les informations de l'utilisateur dans Firestore
       await _firestore.collection('users').doc(userCredential.user!.uid).set({
         'nom': nameController.text,
         'prenom': givenNameController.text,
@@ -100,136 +98,74 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Inscription')),
+      backgroundColor: Colors.grey[200],
+      appBar: AppBar(
+        title: Text('Inscription', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: Colors.purple,
+        elevation: 4,
+      ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextFormField(
+                Center(
+                  child: Icon(Icons.person_add, size: 100, color: Colors.purple),
+                ),
+                SizedBox(height: 20),
+                _buildTextField(
                   controller: nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Nom',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer votre nom';
-                    }
-                    return null;
-                  },
+                  label: 'Nom',
+                  icon: Icons.person,
                 ),
                 SizedBox(height: 10),
-                TextFormField(
+                _buildTextField(
                   controller: givenNameController,
-                  decoration: InputDecoration(
-                    labelText: 'Prénom',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer votre prénom';
-                    }
-                    return null;
-                  },
+                  label: 'Prénom',
+                  icon: Icons.person_outline,
                 ),
                 SizedBox(height: 10),
-                TextFormField(
+                _buildTextField(
                   controller: phoneController,
-                  decoration: InputDecoration(
-                    labelText: 'Téléphone',
-                    border: OutlineInputBorder(),
-                  ),
+                  label: 'Téléphone',
+                  icon: Icons.phone,
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
                     LengthLimitingTextInputFormatter(10),
                   ],
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer votre numéro de téléphone';
-                    }
-                    if (value.length != 10) {
-                      return 'Le numéro de téléphone doit contenir 10 chiffres';
-                    }
-                    return null;
-                  },
                 ),
                 SizedBox(height: 10),
-                TextFormField(
+                _buildTextField(
                   controller: emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
-                  ),
+                  label: 'Email',
+                  icon: Icons.email,
                   keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer votre adresse e-mail';
-                    }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                      return 'Veuillez entrer une adresse e-mail valide';
-                    }
-                    return null;
-                  },
                 ),
                 SizedBox(height: 10),
-                TextFormField(
+                _buildPasswordField(
                   controller: passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Mot de passe',
-                    border: OutlineInputBorder(),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _isPasswordVisible = !_isPasswordVisible;
-                        });
-                      },
-                    ),
-                  ),
-                  obscureText: !_isPasswordVisible,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un mot de passe';
-                    }
-                    if (value.length < 6) {
-                      return 'Le mot de passe doit contenir au moins 6 caractères';
-                    }
-                    return null;
+                  label: 'Mot de passe',
+                  isVisible: _isPasswordVisible,
+                  toggleVisibility: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
                   },
                 ),
                 SizedBox(height: 10),
-                TextFormField(
+                _buildPasswordField(
                   controller: confirmPasswordController,
-                  decoration: InputDecoration(
-                    labelText: 'Confirmer mot de passe',
-                    border: OutlineInputBorder(),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                        });
-                      },
-                    ),
-                  ),
-                  obscureText: !_isConfirmPasswordVisible,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez confirmer votre mot de passe';
-                    }
-                    if (value != passwordController.text) {
-                      return 'Les mots de passe ne correspondent pas';
-                    }
-                    return null;
+                  label: 'Confirmer mot de passe',
+                  isVisible: _isConfirmPasswordVisible,
+                  toggleVisibility: () {
+                    setState(() {
+                      _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                    });
                   },
                 ),
                 SizedBox(height: 10),
@@ -245,22 +181,19 @@ class _RegisterState extends State<Register> {
                       selectedUserType = newValue!;
                     });
                   },
-                  decoration: InputDecoration(labelText: 'Type d\'utilisateur'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez choisir un type d\'utilisateur';
-                    }
-                    return null;
-                  },
+                  decoration: InputDecoration(
+                    labelText: 'Type d\'utilisateur',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
-                SizedBox(height: 16.0),
+                SizedBox(height: 20),
                 isLoading
                     ? Center(child: CircularProgressIndicator())
                     : BoutonReutilisable(
                         text: "S'inscrire",
                         onPressed: registerUser,
                       ),
-                SizedBox(height: 16.0),
+                SizedBox(height: 20),
                 BoutonReutilisable(
                   text: "Se connecter",
                   onPressed: () {
@@ -275,6 +208,46 @@ class _RegisterState extends State<Register> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+        prefixIcon: Icon(icon, color: Colors.purple),
+      ),
+    );
+  }
+
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required String label,
+    required bool isVisible,
+    required VoidCallback toggleVisibility,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: !isVisible,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+        prefixIcon: Icon(Icons.lock, color: Colors.purple),
+        suffixIcon: IconButton(
+          icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off),
+          onPressed: toggleVisibility,
         ),
       ),
     );

@@ -30,7 +30,13 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Demandes Publiées')),
+      appBar: AppBar(
+        title: Text('Demandes Publiées'),
+        backgroundColor: Colors.purple, // Couleur de fond violette pour l'AppBar
+        flexibleSpace: Container(
+          color: Colors.purple[300], // Changement de la couleur de fond de l'AppBar
+        ),
+      ),
       body: FutureBuilder<String>(
         future: _getUserName(), // Récupérer le nom de l'utilisateur
         builder: (context, snapshot) {
@@ -144,8 +150,8 @@ class DemandCard extends StatelessWidget {
                     ),
                   );
                 },
-                backgroundColor: Colors.blueAccent, // Couleur de fond
-                textColor: Colors.white, // Couleur du texte
+                backgroundColor: Colors.purple, // Couleur de fond violette
+                textColor: Colors.white, // Couleur du texte en blanc
               ),
             ),
           ],

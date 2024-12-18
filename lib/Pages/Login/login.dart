@@ -15,7 +15,6 @@ class _LoginState extends State<Login> {
   bool isLoading = false;
   bool passwordVisible = false;
 
-  // Méthode pour se connecter avec Firebase
   Future<void> loginUser() async {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       showErrorDialog("Veuillez remplir tous les champs");
@@ -61,7 +60,6 @@ class _LoginState extends State<Login> {
     }
   }
 
-  // Méthode pour afficher la boîte de dialogue d'erreur
   void showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -83,86 +81,100 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Connexion')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Champ email avec style personnalisé
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+      appBar: AppBar(
+        title: Text('Connexion'),
+        backgroundColor: Colors.purple,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 20),
+              Text(
+                'Bienvenue',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.purple,
                 ),
-                prefixIcon: Icon(Icons.email),
-                filled: true,
-                fillColor: Colors.purple.shade50,
               ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            SizedBox(height: 20),
-
-            // Champ mot de passe avec style personnalisé
-            TextField(
-              controller: passwordController,
-              decoration: InputDecoration(
-                labelText: 'Mot de passe',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+              SizedBox(height: 10),
+              Text(
+                'Connectez-vous pour continuer',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey.shade600,
                 ),
-                prefixIcon: Icon(Icons.lock),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    passwordVisible ? Icons.visibility : Icons.visibility_off,
+              ),
+              SizedBox(height: 30),
+              TextField(
+                controller: emailController,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  onPressed: () {
-                    setState(() {
-                      passwordVisible = !passwordVisible;
-                    });
-                  },
+                  prefixIcon: Icon(Icons.email),
+                  filled: true,
+                  fillColor: Colors.purple.shade50,
                 ),
-                filled: true,
-                fillColor: Colors.purple.shade50,
+                keyboardType: TextInputType.emailAddress,
               ),
-              obscureText: !passwordVisible,
-            ),
-            SizedBox(height: 20),
-
-            // Bouton de connexion avec le composant bouton réutilisable
-            isLoading
-                ? CircularProgressIndicator()
-                : BoutonReutilisable(
-                    onPressed: loginUser,
-                    text: 'Se connecter', // Utilisez 'text' au lieu de 'child'
-                    backgroundColor: Colors.purple,  // Couleur d'arrière-plan
-                    textColor: Colors.white,         // Couleur du texte
+              SizedBox(height: 20),
+              TextField(
+                controller: passwordController,
+                decoration: InputDecoration(
+                  labelText: 'Mot de passe',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
-
-            // Lien vers la page d'inscription
-            TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/register');
-              },
-              child: Text(
-                "Pas encore de compte ? Inscrivez-vous",
-                style: TextStyle(color: Colors.purple),
+                  prefixIcon: Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      passwordVisible ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        passwordVisible = !passwordVisible;
+                      });
+                    },
+                  ),
+                  filled: true,
+                  fillColor: Colors.purple.shade50,
+                ),
+                obscureText: !passwordVisible,
               ),
-            ),
-
-            // Lien vers la page de mot de passe oublié
-            TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/forgotPassword');
-              },
-              child: Text(
-                "Mot de passe oublié ?",
-                style: TextStyle(color: Colors.purple),
+              SizedBox(height: 20),
+              isLoading
+                  ? CircularProgressIndicator()
+                  : BoutonReutilisable(
+                      onPressed: loginUser,
+                      text: 'Se connecter',
+                      backgroundColor: Colors.purple,
+                      textColor: Colors.white,
+                    ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/register');
+                },
+                child: Text(
+                  "Pas encore de compte ? Inscrivez-vous",
+                  style: TextStyle(color: Colors.purple),
+                ),
               ),
-            ),
-          ],
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/forgotPassword');
+                },
+                child: Text(
+                  "Mot de passe oublié ?",
+                  style: TextStyle(color: Colors.purple),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
